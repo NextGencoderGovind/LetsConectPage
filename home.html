@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lets conect page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        #header {
+            background-color: #3b5998;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #user-info {
+            background-color: #e9ecef;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #post-form {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            padding: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            resize: none;
+        }
+
+        .file-input {
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #posts {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        .post {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 70%;
+            max-width: 600px;
+            transition: transform 0.3s ease;
+        }
+
+        .post:hover {
+            transform: scale(1.02);
+        }
+
+        .post p {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .post img,
+        .post video {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>let's conect</h1>
+    </div>
+
+    <div id="user-info">
+        <span id="welcome-message"></span>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <div id="post-form">
+        <textarea id="post-text" placeholder="What's on your mind?"></textarea>
+        <input type="file" class="file-input" accept="image/*, video/*" id="post-file">
+        <button onclick="post()">Post</button>
+    </div>
+
+    <div id="posts">
+        <!-- Posts will be dynamically added here using JavaScript -->
+    </div>
+
+    <script>
+        // Check if the user is logged in
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (!loggedInUser) {
+            // Redirect to the login page if not logged in
+            window.location.href = 'login.html';
+        }
+
+        // Display welcome message
+        document.getElementById('welcome-message').innerText = `Welcome, ${loggedInUser}!`;
+
+        function logout() {
+            // Clear the user from local storage and redirect to the login page
+            localStorage.removeItem('loggedInUser');
+            window.location.href = 'login.html';
+        }
+
+        function post() {
+            // In a real application, you would send the post data to the server
+            // and update the posts dynamically without reloading the page
+            const postText = document.getElementById('post-text').value;
+            const postFile = document.getElementById('post-file').files[0];
+            const postContainer = document.getElementById('posts');
+
+            const postElement = document.createElement('div');
+            postElement.className = 'post';
+            postElement.innerHTML = `<p>${postText}</p>`;
+
+            if (postFile) {
+                const fileType = postFile.type.split('/')[0];
+                if (fileType === 'image') {
+                    postElement.innerHTML += `<img src="${URL.createObjectURL(postFile)}" alt="Posted Image">`;
+                } else if (fileType === 'video') {
+                    postElement.innerHTML += `<video controls><source src="${URL.createObjectURL(postFile)}" type="${postFile.type}">Your browser does not support the video tag.</video>`;
+                }
+            }
+
+            postContainer.prepend(postElement);
+
+            // Clear the textarea and file input after posting
+            document.getElementById('post-text').value = '';
+            document.getElementById('post-file').value = '';
+        }
+    </script>
+</body>
+</html>
